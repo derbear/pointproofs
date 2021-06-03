@@ -18,7 +18,8 @@ pub struct vcp_value {
 #[no_mangle]
 pub extern fn vcp_paramgen(seedbuf: *const u8, seedlen: libc::size_t, n: usize) -> vcp_params {
   let seed = unsafe { slice::from_raw_parts(seedbuf, seedlen) };
-  let (pp, vp) = super::paramgen::paramgen_from_seed(seed, n);
+  let (mut pp, vp) = super::paramgen::paramgen_from_seed(seed, n);
+  pp.precomp_256();
   let boxpp = Box::new(pp);
   let boxvp = Box::new(vp);
   vcp_params {

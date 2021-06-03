@@ -1,15 +1,20 @@
 #[macro_use]
-extern crate bencher;
+extern crate criterion;
 extern crate veccom;
 
-use bencher::Bencher;
+use criterion::Bencher;
+use criterion::Criterion;
+use criterion::Benchmark;
+// use bencher::Bencher;
+use std::time::Duration;
 use veccom::merkle::*;
 
-benchmark_group!(benches, bench_com_merkle, bench_tree_building_merkle, bench_prove_from_scratch_merkle, bench_prove_from_tree_merkle, bench_verify_merkle, bench_commit_update_merkle, bench_tree_update_merkle, bench_proof_update_no_helper_merkle, bench_proof_update_with_helper_merkle);
-benchmark_main!(benches);
+// criterion_group!(benches, bench_com_merkle, bench_tree_building_merkle, bench_prove_from_scratch_merkle, bench_prove_from_tree_merkle, bench_verify_merkle, bench_commit_update_merkle, bench_tree_update_merkle, bench_proof_update_no_helper_merkle, bench_proof_update_with_helper_merkle);
+criterion_group!(benches, bench_merkle);
+criterion_main!(benches);
 
-fn bench_com_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_com_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -28,8 +33,8 @@ fn bench_com_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_tree_building_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_tree_building_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -49,8 +54,8 @@ fn bench_tree_building_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_prove_from_scratch_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_prove_from_scratch_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -72,8 +77,8 @@ fn bench_prove_from_scratch_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_prove_from_tree_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_prove_from_tree_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -96,8 +101,8 @@ fn bench_prove_from_tree_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_verify_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_verify_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params =  paramgen(n);
 
@@ -124,8 +129,8 @@ fn bench_verify_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_commit_update_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_commit_update_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -155,8 +160,8 @@ fn bench_commit_update_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_tree_update_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_tree_update_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
 
     let params = paramgen(n);
 
@@ -184,8 +189,8 @@ fn bench_tree_update_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_proof_update_no_helper_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_proof_update_no_helper_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
     let update_index = n/2;  // We will update message number n/2 and then benchmark changing proofs for others
 
 
@@ -224,8 +229,8 @@ fn bench_proof_update_no_helper_merkle(b: &mut Bencher) {
     });
 }
 
-fn bench_proof_update_with_helper_merkle(b: &mut Bencher) {
-    let n = 1000usize;
+fn bench_proof_update_with_helper_merkle(n: usize, b: &mut Bencher) {
+    // let n = 1000usize;
     let update_index = n/2;  // We will update message number n/2 and then benchmark changing proofs for others
 
 
@@ -265,4 +270,78 @@ fn bench_proof_update_with_helper_merkle(b: &mut Bencher) {
         }
         proofs[i].len()
     });
+}
+
+fn bench_merkle(c: &mut Criterion) {
+    // let n = 1024usize;
+
+    let bench = Benchmark::new("com_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_com_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("prove_from_scratch_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_prove_from_scratch_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("prove_from_tree_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_prove_from_tree_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("verify_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_verify_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("commit_update_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_commit_update_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("verify_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_verify_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("proof_update_with_helper_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_proof_update_with_helper_merkle(n, b);
+    });
+
+    let bench = Benchmark::new("proof_update_no_helper_merkle", |b|{
+        // Does not include a to_bytes conversion for the commitment, because you normally
+        // would store this yourself rather than send it on the network
+
+        let n = 1024usize;
+        bench_proof_update_no_helper_merkle(n, b);
+    });
+
+    let bench = bench.warm_up_time(Duration::from_millis(1000));
+    // let bench = bench.measurement_time(Duration::from_millis(5000));
+    let bench = bench.sample_size(100);
+
+    c.bench("merkle", bench);
 }

@@ -109,10 +109,12 @@ fn bench_proof_update_helper (prover_params: &ProverParams, n: usize, b: &mut Be
 
 
 fn bench_pairings(c: &mut Criterion) {
+    // let n = 1024usize;
+
     let bench = Benchmark::new("commit_no_precomp", |b|{
         // Does not include a to_bytes conversion for the commitment, because you normally
         // would store this yourself rather than send it on the network
-        let n = 1000usize;
+        let n = 1024usize;
 
         let prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
 
@@ -122,7 +124,7 @@ fn bench_pairings(c: &mut Criterion) {
     let bench = bench.with_function("commit_precomp_256", |b|{
         // Does not include a to_bytes conversion for the commitment, because you normally
         // would store this yourself rather than send it on the network
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_256();
@@ -133,7 +135,7 @@ fn bench_pairings(c: &mut Criterion) {
     let bench = bench.with_function("prove_no_precomp", |b|{
         // includes to_bytes conversion for the proof, because this is supposed to measure what it takes
         // to produce a proof you will send on the network
-        let n = 1000usize;
+        let n = 1024usize;
 
         let prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
 
@@ -143,7 +145,7 @@ fn bench_pairings(c: &mut Criterion) {
     let bench = bench.with_function("prove_precomp_256", |b|{
         // includes to_bytes conversion for the proof, because this is supposed to measure what it takes
         // to produce a proof you will send on the network
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_256();
@@ -153,7 +155,8 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("verify", |b|{
         // includes from_bytes conversion for the proof, because you would normally get the proof from the network
-        let n = 100usize;
+        // let n = 100usize; // TODO figure out why (?) perhaps independent of vector size
+        let n = 1024usize;
 
         let (prover_params, verifier_params) = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n);
 
@@ -183,7 +186,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("commit_update_no_precomp", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         bench_commit_update_helper (&prover_params, n, b);
@@ -191,7 +194,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("commit_update_precomp_3", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_3();
@@ -200,7 +203,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("commit_update_precomp_256", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_256();
@@ -211,7 +214,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("proof_update_no_precomp", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         bench_proof_update_helper(&prover_params, n, b);
@@ -220,7 +223,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("proof_update_precomp_3", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_3();
@@ -229,7 +232,7 @@ fn bench_pairings(c: &mut Criterion) {
 
     let bench = bench.with_function("proof_update_precomp_256", |b|{
         // Does not include to/from bytes conversion, because this is supposed to be a local operation
-        let n = 1000usize;
+        let n = 1024usize;
 
         let mut prover_params = paramgen_from_seed(&format!("This is Leo's Favourite Seed").into_bytes(), n).0;
         prover_params.precomp_256();
@@ -237,8 +240,8 @@ fn bench_pairings(c: &mut Criterion) {
     });
 
     let bench = bench.warm_up_time(Duration::from_millis(1000));
-    let bench = bench.measurement_time(Duration::from_millis(5000));
-    let bench = bench.sample_size(10);
+    // let bench = bench.measurement_time(Duration::from_millis(5000));
+    let bench = bench.sample_size(100);
 
     c.bench("pairings", bench);
 }
